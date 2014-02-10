@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Demo::Application.config.secret_key_base = 'c3527af88200e26337f2be737d3696ffecee422d3367c37be35a932d562f59a0d094bfe57b26e1af0cbdcde04e46bef04f9fae22ca13df9f58fb54c4df6f628e'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+Demo::Application.config.secret_key_base = secure_token
